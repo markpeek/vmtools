@@ -3,13 +3,13 @@
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -435,52 +435,54 @@ static PyMemberDef vmt_members[] = {
 
 static PyTypeObject vmttype = {
         PyObject_HEAD_INIT(NULL)
-        0,                        /*ob_size*/
-        "_vmt.vmt",               /*tp_name*/
-        sizeof(vmtobject),        /*tp_size*/
-        0,                        /*tp_itemsize*/
+        0,                        /* ob_size            */
+        "_vmt.vmt",               /* tp_name            */
+        sizeof(vmtobject),        /* tp_size            */
+        0,                        /* tp_itemsize        */
         /* methods */
-        (destructor)vmt_dealloc,  /*tp_dealloc*/
-        0,                        /*tp_print*/
-        0,                        /*tp_getattr*/
-        0,                        /*tp_setattr*/
-        0,                        /*tp_compare*/
-        (reprfunc)vmt_repr,       /*tp_repr*/
-        0,                        /*tp_as_number*/
-        0,                        /*tp_as_sequence*/
-        0,                        /*tp_as_mapping*/
-        0,                        /*tp_hash*/
-        0,                        /*tp_call*/
-        0,                        /*tp_str*/
-        0,                        /*tp_getattro*/
-        0,                        /*tp_setattro*/
-        0,                        /*tp_as_buffer*/
-        Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HEAPTYPE,       /*tp_flags*/
-        "vmt object",             /*tp_doc*/
-        0,                        /*tp_traverse*/
-        0,                        /*tp_clear*/
-        0,                        /*tp_richcompare*/
-        0,                        /*tp_weaklistoffset*/
-        0,                        /*tp_iter*/
-        0,                        /*tp_iternext*/
-        vmt_methods,              /*tp_methods*/
-        vmt_members,              /*tp_members*/
-        0,                        /*tp_getset*/
-        0,                        /* tp_base */
-        0,                        /* tp_dict */
-        0,                        /* tp_descr_get */
-        0,                        /* tp_descr_set */
-        0,                        /* tp_dictoffset */
-        (initproc)vmt_init,       /* tp_init */
-        0,      /* tp_alloc */
-        0,        /* tp_new */
-        0,            /* tp_free */
+        (destructor)vmt_dealloc,  /* tp_dealloc         */
+        0,                        /* tp_print           */
+        0,                        /* tp_getattr         */
+        0,                        /* tp_setattr         */
+        0,                        /* tp_compare         */
+        (reprfunc)vmt_repr,       /* tp_repr            */
+        0,                        /* tp_as_number       */
+        0,                        /* tp_as_sequence     */
+        0,                        /* tp_as_mapping      */
+        0,                        /* tp_hash            */
+        0,                        /* tp_call            */
+        0,                        /* tp_str             */
+        0,                        /* tp_getattro        */
+        0,                        /* tp_setattro        */
+        0,                        /* tp_as_buffer       */
+        Py_TPFLAGS_DEFAULT,       /* tp_flags           */
+        "vmt object",             /* tp_doc             */
+        0,                        /* tp_traverse        */
+        0,                        /* tp_clear           */
+        0,                        /* tp_richcompare     */
+        0,                        /* tp_weaklistoffset  */
+        0,                        /* tp_iter            */
+        0,                        /* tp_iternext        */
+        vmt_methods,              /* tp_methods         */
+        vmt_members,              /* tp_members         */
+        0,                        /* tp_getset          */
+        0,                        /* tp_base            */
+        0,                        /* tp_dict            */
+        0,                        /* tp_descr_get       */
+        0,                        /* tp_descr_set       */
+        0,                        /* tp_dictoffset      */
+        (initproc)vmt_init,       /* tp_init            */
+        0,                        /* tp_alloc           */
+        0,                        /* tp_new             */
+        0,                        /* tp_free            */
 };
 
 PyMODINIT_FUNC
 init_vmt(void)
 {
         PyObject *m;
+
+        vmttype.tp_new = PyType_GenericNew;
 
         /*Py_TYPE(&vmttype) = &PyType_Type;*/
         if (PyType_Ready(&vmttype) < 0)
