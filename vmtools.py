@@ -2,13 +2,13 @@
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met: 
+# modification, are permitted provided that the following conditions are met:
 #
-# 1. Redistributions of source code must retain the above copyright notice, this
-#    list of conditions and the following disclaimer. 
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
 # 2. Redistributions in binary form must reproduce the above copyright notice,
 #    this list of conditions and the following disclaimer in the documentation
-#    and/or other materials provided with the distribution. 
+#    and/or other materials provided with the distribution.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -48,29 +48,30 @@ CMD_BEFOREPOWEROFF = "Set_Option toolScripts.beforePowerOff 1"
 CMD_BEFORESUSPEND = "Set_Option toolScripts.beforeSuspend 1"
 CMD_AFTERRESUME = "Set_Option toolScripts.afterResume 1"
 
-MESSAGE_SUCCESS    = 0x0001
-MESSAGE_DORECV     = 0x0002
-MESSAGE_CLOSED     = 0x0004
-MESSAGE_UNSENT     = 0x0008
-MESSAGE_CHECKPT    = 0x0010
-MESSAGE_POWEROFF   = 0x0020
-MESSAGE_TIMEOUT    = 0x0040
+MESSAGE_SUCCESS = 0x0001
+MESSAGE_DORECV = 0x0002
+MESSAGE_CLOSED = 0x0004
+MESSAGE_UNSENT = 0x0008
+MESSAGE_CHECKPT = 0x0010
+MESSAGE_POWEROFF = 0x0020
+MESSAGE_TIMEOUT = 0x0040
 MESSAGE_HB_SUPPORT = 0x0080
 
 MESSAGE_COOKIE = 0x80000000
 
-MESSAGE_TYPE_OPEN        = 0x00000000
-MESSAGE_TYPE_SENDSIZE    = 0x00010000
+MESSAGE_TYPE_OPEN = 0x00000000
+MESSAGE_TYPE_SENDSIZE = 0x00010000
 MESSAGE_TYPE_SENDPAYLOAD = 0x00020000
-MESSAGE_TYPE_RECVSIZE    = 0x00030000
+MESSAGE_TYPE_RECVSIZE = 0x00030000
 MESSAGE_TYPE_RECVPAYLOAD = 0x00040000
-MESSAGE_TYPE_RECVSTATUS  = 0x00050000
-MESSAGE_TYPE_CLOSE       = 0x00060000
+MESSAGE_TYPE_RECVSTATUS = 0x00050000
+MESSAGE_TYPE_CLOSE = 0x00060000
 
 RPC_PORT = 0x5659
 
 noaction = False
 verbose = False
+
 
 class channel(object):
     def __init__(self, proto):
@@ -133,7 +134,8 @@ class channel(object):
         if len(s):
             # Send the command
             self.v.rax = self.VM_MAGIC
-            self.v.rbx = 0x00010000 # really bdoorhb_cmd_message | message_status_success
+            # below is really bdoorhb_cmd_message | message_status_success
+            self.v.rbx = 0x00010000
             self.v.rcx = len(s)
             self.v.rdx = self.id | RPC_PORT
             self.v.rbp = self.cookieHigh
@@ -179,7 +181,8 @@ class channel(object):
         self.v.backdoor()
 
         return ret
-        
+
+
 class rpc_channel(object):
     def __init__(self):
         self.channel = channel(CHANNEL_RPCI)
@@ -192,6 +195,7 @@ class rpc_channel(object):
         if verbose:
             print "RPC received: %s" % (ret,)
         return ret
+
 
 class tclo_channel(object):
     def __init__(self):
@@ -208,17 +212,21 @@ class tclo_channel(object):
             print "TCLO sending: %s" % (s,)
         self.channel.send(s)
 
+
 def cleanup(chan, msg):
     if verbose:
         print "cleaning up"
     chan.send(msg)
 
+
 def cmd_ok(rpc, tclo):
     return 1
 
+
 def cmd_reset(rpc, tclo):
-    tclo.send("OK ATR toolbox");
+    tclo.send("OK ATR toolbox")
     return 0
+
 
 def cmd_capa(rpc, tclo):
     rpc.rpc("vmx.capability.unified_loop toolbox")
@@ -227,6 +235,7 @@ def cmd_capa(rpc, tclo):
     # Fake a version
     rpc.rpc("tools.set.version 2147483647")
     return 1
+
 
 def cmd_ossuspend(rpc, tclo):
     if verbose:
@@ -237,6 +246,7 @@ def cmd_ossuspend(rpc, tclo):
     rpc.rpc("tools.os.statechange.status 1 5")
     return 0
 
+
 def cmd_osresume(rpc, tclo):
     if verbose:
         print "Resuming..."
@@ -245,12 +255,14 @@ def cmd_osresume(rpc, tclo):
     rpc.rpc("tools.os.statechange.status 1 4")
     return 0
 
+
 def cmd_osreboot(rpc, tclo):
     if verbose:
         print "Rebooting..."
     time.sleep(30)
     if not noaction:
         os.system("/sbin/shutdown -r now")
+
 
 def cmd_oshalt(rpc, tclo):
     if verbose:
@@ -265,6 +277,7 @@ def cmd_oshalt(rpc, tclo):
             os.system("/sbin/shutdown -h now")
         else:
             os.system("halt -p")
+
 
 def cmd_broadcastip(rpc, tclo):
     # Need to provide an interface to set the IP address correctly
@@ -287,6 +300,7 @@ commands = {
     CMD_OSRESUME: cmd_osresume,
     CMD_BROADCASTIP: cmd_broadcastip,
 }
+
 
 class vmclient(object):
     def __init__(self, sleeper=None):
@@ -321,15 +335,19 @@ class vmclient(object):
                 print "Sending error for '%s'" % (cmd, )
             self.tclo.send("ERROR Unknown command")
 
+
 def sleeper():
     time.sleep(10)
+
 
 def main():
     global verbose, noaction
     from optparse import OptionParser
     parser = OptionParser()
-    parser.add_option("-n", action="store_true", dest="noaction", default=False)
-    parser.add_option("-v", action="store_true", dest="verbose", default=False)
+    parser.add_option(
+        "-n", action="store_true", dest="noaction", default=False)
+    parser.add_option(
+        "-v", action="store_true", dest="verbose", default=False)
     (options, args) = parser.parse_args()
     noaction = options.noaction
     verbose = options.verbose
